@@ -11,7 +11,7 @@
 #
 
 #
-# Copyright (c) 2018, Joyent, Inc.
+# Copyright 2019 Joyent, Inc.
 #
 
 set -o xtrace
@@ -70,6 +70,17 @@ function mount_zfs
     echo ${output} 1>&2
 }
 
+function unlock_fail
+{
+    local pool="$1"
+
+    echo "Failed to unlock $pool; recovery may be required" >&2
+
+    # This is important enough we want the message to also appear on the
+    # console when this happens
+    echo "Failed to unlock $pool; recovery may be required" > /dev/console
+}
+
 /bin/bootparams | grep "^noimport=true" >/dev/null
 if [ $? -ne 0 ]; then
     # If the zpool doesn't exist, then there's nothing to mount.
@@ -87,9 +98,15 @@ if [ $? -ne 0 ]; then
 
     for pool in $pools; do
         zpool import -f $pool
-	# Due to early, failed attempts to support the filesystem_limits
-	# feature we now need to ensure the dependent feature is enabled.
-	zpool set feature@extensible_dataset=enabled $pool
+
+        is_encr=$(zfs get -Hp encryption $pool | awk '{print $3}')
+        if [[ "$is_encr" != "off" ]]; then
+            kbmadm unlock $pool || unlock_fail $pool
+        fi
+
+        # Due to early, failed attempts to support the filesystem_limits
+        # feature we now need to ensure the dependent feature is enabled.
+        zpool set feature@extensible_dataset=enabled $pool
         if [[ -f /$pool/.system_pool ]]; then
             SYS_ZPOOL=$pool
         fi
