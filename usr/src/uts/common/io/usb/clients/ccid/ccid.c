@@ -2688,7 +2688,8 @@ ccid_slot_params_init(ccid_t *ccid, ccid_slot_t *slot, mblk_t *atr)
 				fip = dip = NULL;
 			}
 			/* XXX: ignoring failure? */
-			ccid_slot_send_pps(ccid, slot, data, fip, dip, prot);
+			(void) ccid_slot_send_pps(ccid, slot, data, fip, dip,
+			    prot);
 		}
 
 		/*
@@ -3916,7 +3917,7 @@ ccid_open(dev_t *devp, int flag, int otyp, cred_t *credp)
 	if (drv_priv(credp) != 0)
 		return (EPERM);
 
-	if (otyp & OTYP_BLK || !(otyp & OTYP_CHR))
+	if (otyp != OTYP_CHR)
 		return (ENOTSUP);
 
 	/* XXX We should maybe reduce this for just getting the status */

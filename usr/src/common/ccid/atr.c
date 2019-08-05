@@ -1094,7 +1094,7 @@ atr_data_rate(atr_data_t *data, ccid_class_descr_t *class, uint32_t *rates,
 void
 atr_data_reset(atr_data_t *data)
 {
-	bzero(data, sizeof (&data));
+	bzero(data, sizeof (*data));
 }
 
 #ifdef	_KERNEL

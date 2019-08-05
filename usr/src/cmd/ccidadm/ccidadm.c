@@ -763,7 +763,7 @@ ccidadm_reader_print(int fd, const char *name, void *unused)
 	}
 	if (cd->ccd_wLcdLayout != 0) {
 		(void) printf("  %2ux%2u LCD present\n",
-		    cd->ccd_wLcdLayout >> 16, cd->ccd_wLcdLayout & 0xff);
+		    cd->ccd_wLcdLayout >> 8, cd->ccd_wLcdLayout & 0xff);
 	}
 
 	if (cd->ccd_bPinSupport) {

@@ -384,7 +384,8 @@ cfga_list_ext(const char *ap, struct cfga_list_data **ap_list, int *nlist,
 	cld->ap_busy = 0;
 	cld->ap_status_time = (time_t)-1;
 	cfga_ccid_fill_info(&ucs, cld->ap_info, sizeof (cld->ap_info));
-	if (strlcpy(cld->ap_type, "icc", sizeof (cld->ap_type)) >= sizeof (cld->ap_type)) {
+	if (strlcpy(cld->ap_type, "icc", sizeof (cld->ap_type)) >=
+	    sizeof (cld->ap_type)) {
 		free(cld);
 		return (cfga_ccid_error(CFGA_LIB_ERROR, errp,
 		    "ap %s type overflowed ICC field", ap));
@@ -398,9 +399,11 @@ cfga_list_ext(const char *ap, struct cfga_list_data **ap_list, int *nlist,
 cfga_err_t
 cfga_help(struct cfga_msg *msgp, const char *opts, cfga_flags_t flags)
 {
-	(*msgp->message_routine)(msgp, "CCID specific commands:\n");
-	(*msgp->message_routine)(msgp, " cfgadm -c [configure|unconfigure] ap_id [ap_id...]\n");
-	(*msgp->message_routine)(msgp, " cfgadm -x warm_reset ap_id [ap_id...]\n");
+	(void) (*msgp->message_routine)(msgp, "CCID specific commands:\n");
+	(void) (*msgp->message_routine)(msgp,
+	    " cfgadm -c [configure|unconfigure] ap_id [ap_id...]\n");
+	(void) (*msgp->message_routine)(msgp,
+	    " cfgadm -x warm_reset ap_id [ap_id...]\n");
 
 	return (CFGA_OK);
 }
