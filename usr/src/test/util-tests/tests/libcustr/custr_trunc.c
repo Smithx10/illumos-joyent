@@ -33,7 +33,7 @@ expect(const char *var, custr_t *cu, const char *str, const char *file,
 	(void) snprintf(msgbuf, sizeof (msgbuf), "%s == '%s' ('%s' == '%s')",
 	    var, str, custr_cstr(cu), str);
 
-	assfail(msgbuf, file, line);
+	(void) assfail(msgbuf, file, line);
 }
 
 #define	EXPECT(_cu, _str) expect(#_cu, _cu, _str, __FILE__, __LINE__)
