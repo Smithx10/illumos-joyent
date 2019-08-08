@@ -1,0 +1,50 @@
+_zone_alias()
+{
+    # Attempt alias -> uuid mapping
+    alias="${COMP_WORDS[COMP_CWORD]}"
+    uuid=$(vmadm lookup alias="$alias")
+    if [[ -n "$uuid" ]]; then
+	_describe_completion "$alias"
+        COMPREPLY=$uuid
+        return 0
+    fi
+
+    # not an exact match, lookup options
+    uuid=$(vmadm lookup alias=~"^$alias")
+    count=$(echo $uuid | wc -w | sed -e 's/ //g')
+
+    if [[ $count -eq 1 ]]; then
+        full_alias="$(vmadm get $uuid | json alias)"
+        _describe_completion "$full_alias"
+        COMPREPLY=$uuid
+        return 0
+    else
+        # inconclusive results, return alias matches, or
+        # the uuid
+        aliases=$(vmadm list | grep " $alias" | awk '{print $NF}')
+        count=$(echo $aliases | wc -w | sed -e 's/ //g')
+        if [[ $count -eq 1 ]]; then
+            uuid=$(vmadm lookup alias=$aliases)
+            _describe_completion "$aliases"
+            if [[ -n "$SMARTOS_MULTILINE_ALIAS_COMPLETION" ]]; then
+                COMPREPLY=$uuid
+            else
+                COMPREPLY=$aliases
+            fi
+            return 0
+        else
+            COMPREPLY=( $(compgen -W "$aliases" -- ${cur}) )
+        fi
+    fi
+}
+
+function _describe_completion() {
+    local alias=$1
+    if [[ -n "$SMARTOS_MULTILINE_ALIAS_COMPLETION" ]]; then
+        tput sc
+        tput bold
+        echo -en "[completed alias: ${alias}]\n"
+        tput rc
+        tput sgr0
+     fi
+}
