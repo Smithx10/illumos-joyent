@@ -81,6 +81,8 @@ elif [[ -f $ZONEROOT/etc/debian_version ]]; then
 	distro="debian"
 elif [[ -f $ZONEROOT/etc/alpine-release ]]; then
 	distro="busybox"
+elif [[ -f $ZONEROOT/etc/void-release ]]; then
+	distro="busybox"
 elif [[ -f $ZONEROOT/etc/SuSE-release ]]; then
 	distro="suse"
 fi
